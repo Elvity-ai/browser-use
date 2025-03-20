@@ -6,6 +6,9 @@
     debugMode: false,
   }
 ) => {
+  if (!window['disableDebug']) {
+    debugger;
+  }
   const { doHighlightElements, focusHighlightIndex, viewportExpansion, debugMode } = args;
   let highlightIndex = 0; // Reset highlight index
 
@@ -362,7 +365,10 @@
       }
 
       const tagName = currentElement.nodeName.toLowerCase();
-      const xpathIndex = index > 0 ? `[${index + 1}]` : "";
+      const siblingsWithSameName = Array.from(currentElement.parentNode.children).filter(
+        (sibling) => sibling.nodeName.toLowerCase() === tagName
+      )
+      const xpathIndex = siblingsWithSameName.length > 0 ? `[${index + 1}]` : "";
       segments.unshift(`${tagName}${xpathIndex}`);
 
       currentElement = currentElement.parentNode;
@@ -494,7 +500,7 @@
     const interactiveElements = new Set([
       "a", "button", "details", "embed", "input", "menu", "menuitem",
       "object", "select", "textarea", "canvas", "summary", "dialog",
-      "banner"
+      "banner", "label"
     ]);
 
     const interactiveRoles = new Set(['button-icon', 'dialog', 'button-text-icon-only', 'treeitem', 'alert', 'grid', 'progressbar', 'radio', 'checkbox', 'menuitem', 'option', 'switch', 'dropdown', 'scrollbar', 'combobox', 'a-button-text', 'button', 'region', 'textbox', 'tabpanel', 'tab', 'click', 'button-text', 'spinbutton', 'a-button-inner', 'link', 'menu', 'slider', 'listbox', 'a-dropdown-button', 'button-icon-only', 'searchbox', 'menuitemradio', 'tooltip', 'tree', 'menuitemcheckbox']);
@@ -508,6 +514,7 @@
     const hasAddressInputClass = element.classList && (
       element.classList.contains("address-input__container__input") ||
       element.classList.contains("nav-btn") ||
+      element.classList.contains("ember-power-select-clear-btn") ||
       element.classList.contains("pull-left")
     );
 
@@ -765,7 +772,7 @@
 
     // Fast-path for common interactive elements
     const interactiveElements = new Set([
-      "a", "button", "input", "select", "textarea", "details", "summary"
+      "a", "button", "input", "select", "textarea", "details", "summary","label"
     ]);
 
     if (interactiveElements.has(tagName)) return true;

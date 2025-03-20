@@ -815,8 +815,11 @@ class BrowserContext:
 		await page.bring_to_front()
 		await page.wait_for_load_state()
 
+		path = "/tmp/browser-use/" + str(uuid.uuid4())
+
 		screenshot = await page.screenshot(
 			full_page=full_page,
+			path = path,
 			animations='disabled',
 		)
 
@@ -988,6 +991,8 @@ class BrowserContext:
 					'data-qa',
 					'data-cy',
 					'data-testid',
+					'data-option-index',
+					'data-ember-action'
 				}
 				SAFE_ATTRIBUTES.update(dynamic_attributes)
 
